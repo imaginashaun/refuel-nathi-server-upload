@@ -163,7 +163,7 @@
 
 
     <!-- jQuery -->
-    <script src="{{secure_asset('plugins/jquery/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{secure_asset('plugins/jquery/jquery.min.js')}}"></script>
     <!-- jQuery UI 1.11.4 -->
     {{--<script src="{{secure_asset('https://code.jquery.com/ui/1.12.1/jquery-ui.min.js')}}"></script>--}}
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -171,12 +171,12 @@
     {{--$.widget.bridge('uibutton', $.ui.button)--}}
     {{--</script>--}}
     <!-- Bootstrap 4 -->
-    <script src="{{secure_asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script type="text/javascript" src="{{secure_asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="{{secure_asset('https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js')}}"></script>
+    <script type="text/javascript" src="{{secure_asset('https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js')}}"></script>
 
-    <script src="{{secure_asset('https://www.gstatic.com/firebasejs/7.2.0/firebase-messaging.js')}}"></script>
+    <script type="text/javascript" src="{{secure_asset('https://www.gstatic.com/firebasejs/7.2.0/firebase-messaging.js')}}"></script>
 
     <script type="text/javascript">@include('vendor.notifications.init_firebase')</script>
 
