@@ -1,0 +1,255 @@
+<?php
+/**
+ * File name: PayPalController.php
+ * Last modified: 2020.06.11 at 16:10:52
+ * Author: SmarterVision - https://codecanyon.net/user/smartervision
+ * Copyright (c) 2020
+ */
+
+namespace App\Http\Controllers;
+
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use Laracasts\Flash\Flash;
+use PayFast\PayFastPayment;
+use Srmklive\PayPal\Services\ExpressCheckout;
+
+class PayPalController extends ParentOrderController
+{
+    /**
+     * @var ExpressCheckout
+     */
+    protected $provider;
+
+    public function __init()
+    {
+        $this->provider = new ExpressCheckout();
+
+    }
+
+    public function index()
+    {
+        return view('welcome');
+    }
+
+
+    public function generateSignature($data, $passPhrase = null) {
+        // Create parameter string
+        $pfOutput = '';
+        foreach( $data as $key => $val ) {
+            if($val !== '') {
+                $pfOutput .= $key .'='. urlencode( trim( $val ) ) .'&';
+            }
+        }
+        // Remove last ampersand
+        $getString = substr( $pfOutput, 0, -1 );
+        if( $passPhrase !== null ) {
+            $getString .= '&passphrase='. urlencode( trim( $passPhrase ) );
+        }
+        return md5( $getString );
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function getExpressCheckout(Request $request)
+    {
+
+
+
+        $user = $this->userRepository->findByField('api_token', $request->get('api_token'))->first();
+        $coupon = $this->couponRepository->findByField('code', $request->get('coupon_code'))->first();
+        $deliveryId = $request->get('delivery_address_id');
+        if (!empty($user)) {
+            $this->order->user = $user;
+            $this->order->user_id = $user->id;
+            $this->order->delivery_address_id = $deliveryId;
+            $this->coupon = $coupon;
+            $payPalCart = $this->getCheckoutData();
+            try {
+                $response = $this->provider->setExpressCheckout($payPalCart);
+                if (!empty($response['paypal_link'])) {
+                    return redirect($response['paypal_link']);
+                } else {
+                    Flash::error($response['L_LONGMESSAGE0']);
+                }
+            } catch (\Exception $e) {
+                Flash::error("Error processing PayPal payment for your order :" . $e->getMessage());
+            }
+        }
+        return redirect(route('payments.failed'));
+
+
+    }
+
+    /**
+     * Set cart data for processing payment on PayPal.
+     *
+     *
+     * @return array
+     */
+    private function getCheckoutData()
+    {
+        $data = [];
+        $this->calculateTotal();
+        $order_id = $this->paymentRepository->all()->count() + 1;
+        $data['items'][] = [
+            'name' => $this->order->user->cart[0]->product->market->name,
+            'price' => $this->total,
+            'qty' => 1,
+        ];
+        $data['total'] = $this->total;
+        $data['return_url'] = url("payments/paypal/express-checkout-success?user_id=" . $this->order->user_id . "&delivery_address_id=" . $this->order->delivery_address_id);
+
+        if (isset($this->coupon)) {
+            $data['return_url'] .= "&coupon_code=" . $this->coupon->code;
+        }
+        $data['cancel_url'] = url('payments/paypal');
+        $data['invoice_id'] = $order_id . '_' . date("Y_m_d_h_i_sa");
+        $data['invoice_description'] = $this->order->user->cart[0]->product->market->name;
+
+        //dd($data);
+        return $data;
+    }
+
+    /**
+     * Process payment on PayPal.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
+    public function getExpressCheckoutSuccess(Request $request)
+    {
+        $token = $request->get('token');
+        $PayerID = $request->get('PayerID');
+        $this->order->user_id = $request->get('user_id', 0);
+        $this->order->user = $this->userRepository->findWithoutFail($this->order->user_id);
+        $this->coupon = $this->couponRepository->findByField('code', $request->get('coupon_code'))->first();
+        $this->order->delivery_address_id = $request->get('delivery_address_id', 0);
+
+        // Verify Express Checkout Token
+        $response = $this->provider->getExpressCheckoutDetails($token);
+        $payPalCart = $this->getCheckoutData();
+
+        if (in_array(strtoupper($response['ACK']), ['SUCCESS', 'SUCCESSWITHWARNING'])) {
+
+            // Perform transaction on PayPal
+            $paymentStatus = $this->provider->doExpressCheckoutPayment($payPalCart, $token, $PayerID);
+            $this->order->payment = new Payment();
+            $this->order->payment->status = $paymentStatus['PAYMENTINFO_0_PAYMENTSTATUS'];
+            $this->order->payment->method = 'PayPal';
+
+            $this->createOrder();
+
+            return redirect(url('payments/paypal'));
+        } else {
+            Flash::error("Error processing PayPal payment for your order");
+            return redirect(route('payments.failed'));
+        }
+    }
+
+
+
+
+    public function checkout(Request $request){
+
+
+
+        try {
+            $payfast = new PayFastPayment(
+                [
+                    'merchantId' => '10022866',
+                    'merchantKey' => 'j5jlaeuaauxi3',
+                    'passPhrase' => '',
+                    'testMode' => true
+                ]
+            );
+
+            /*  $data = [
+                  'amount' => '100.00',
+                  'item_name' => 'Order#123',
+                  'm_payment_id' => '2',
+                  'return_url' => env('RETURN_URL'),
+                  'cancel_url' => env('CANCEL_URL'),
+                  'notify_url' => env('NOTIFY_URL'),
+              ];
+  */
+            $data = $this->getCheckoutDataPF();
+
+            echo "<html><body><script type='text/javascript'>window.onload = function() {document.querySelector('form').submit();}</script>";
+
+            echo $payfast->custom->createFormFields($data, ['value' => 'PAY NOW', 'class' => 'btn']);
+            echo "</body></html>";
+        } catch(Exception $e) {
+            echo 'There was an exception: '.$e->getMessage();
+        }
+
+
+
+        /*
+                try {
+                    $payfast = new PayFastPayment(
+                        [
+                            'merchantId' => '10022866',
+                            'merchantKey' => 'j5jlaeuaauxi3',
+                            'passPhrase' => '',
+                            'testMode' => true
+                        ]
+                    );
+
+                    $data = [
+                        'amount' => '100.00',
+                        'item_name' => 'Order#123'
+                    ];
+
+                    // Generate payment identifier
+                    $identifier = $payfast->onsite->generatePaymentIdentifier($data);
+
+
+
+                    return view('payfast', ['identifier' => $identifier]);
+
+                } catch(Exception $e) {
+                    //return view('greeting', ['name' => 'Finn']);
+
+                    echo 'There was an exception: '.$e->getMessage();
+
+                    die();
+                }
+
+        */
+    }
+
+    private function getCheckoutDataPF()
+    {
+        $data = [];
+        $this->calculateTotal();
+        $order_id = $this->paymentRepository->all()->count() + 1;
+
+        $data = [
+            'amount' => $this->total,
+            'item_name' => $this->order->user->cart[0]->product->market->name,
+            'm_payment_id' => $this->order->user_id,
+            'return_url' =>  url("api/paymentreturn?user_id=" . $this->order->user_id . "&delivery_address_id=" . $this->order->delivery_address_id),
+            'cancel_url' => env('CANCEL_URL'),
+            'notify_url' => env('NOTIFY_URL'),
+        ];
+
+        //$data['total'] = $this->total;
+        //   $data['return_url'] = url("api/paymentreturn?user_id=" . $this->order->user_id . "&delivery_address_id=" . $this->order->delivery_address_id);
+
+        if (isset($this->coupon)) {
+            $data['return_url'] .= "&coupon_code=" . $this->coupon->code;
+        }
+        //  $data['cancel_url'] = url('payments/paypal');
+        //  $data['invoice_id'] = $order_id . '_' . date("Y_m_d_h_i_sa");
+        //  $data['invoice_description'] = $this->order->user->cart[0]->product->market->name;
+
+        //dd($data);
+        return $data;
+    }
+}
