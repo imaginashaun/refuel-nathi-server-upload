@@ -77,25 +77,25 @@
                         <p>{{trans('lang.product_plural')}}</p></a>
                 </li>
             @endcan
-            @can('optionGroups.index')
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('optionGroups*') ? 'active' : '' }}" href="{!! route('optionGroups.index') !!}">@if($icons)<i class="nav-icon fa fa-plus-square"></i>@endif<p>{{trans('lang.option_group_plural')}}</p></a>
+        <!--  @can('optionGroups.index')
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('optionGroups*') ? 'active' : '' }}" href="{!! route('optionGroups.index') !!}">@if($icons)<i class="nav-icon fa fa-plus-square"></i>@endif<p>{{trans('lang.option_group_plural')}}</p></a>
                 </li>
+            @endcan-->
+                @can('options.index')
+                    <li class="nav-item">
+                        <a class="nav-link {{ Request::is('options*') ? 'active' : '' }}" href="{!! route('options.index') !!}">@if($icons)
+                                <i class="nav-icon fa fa-plus-square-o"></i>@endif<p>{{trans('lang.option_plural')}}</p></a>
+                    </li>
             @endcan
-            @can('options.index')
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('options*') ? 'active' : '' }}" href="{!! route('options.index') !!}">@if($icons)
-                            <i class="nav-icon fa fa-plus-square-o"></i>@endif<p>{{trans('lang.option_plural')}}</p></a>
-                </li>
-            @endcan
-
+            <!--
             @can('productReviews.index')
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('productReviews*') ? 'active' : '' }}" href="{!! route('productReviews.index') !!}">@if($icons)
-                            <i class="nav-icon fa fa-comments"></i>@endif<p>{{trans('lang.product_review_plural')}}</p></a>
+                    <i class="nav-icon fa fa-comments"></i>@endif<p>{{trans('lang.product_review_plural')}}</p></a>
                 </li>
             @endcan
-
+                    -->
         </ul>
     </li>
 @endcan
@@ -122,11 +122,11 @@
                 </li>
             @endcan
 
-                @can('deliveryAddresses.index')
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::is('deliveryAddresses*') ? 'active' : '' }}" href="{!! route('deliveryAddresses.index') !!}">@if($icons)<i class="nav-icon fa fa-map"></i>@endif<p>{{trans('lang.delivery_address_plural')}}</p></a>
-                    </li>
-                @endcan
+            @can('deliveryAddresses.index')
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('deliveryAddresses*') ? 'active' : '' }}" href="{!! route('deliveryAddresses.index') !!}">@if($icons)<i class="nav-icon fa fa-map"></i>@endif<p>{{trans('lang.delivery_address_plural')}}</p></a>
+                </li>
+            @endcan
 
         </ul>
     </li>
@@ -156,17 +156,18 @@
 
                 </li>
             @endcan
-                @can('trucks.create')
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::is('trucks*') ? 'active' : '' }}" href="{!! route('trucks.create') !!}">@if($icons)<i class="nav-icon fa fa-truck"></i>@endif<p>Add Truck </p></a>
-                    </li>
-                @endcan
+            @can('trucks.create')
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('trucks*') ? 'active' : '' }}" href="{!! route('trucks.create') !!}">@if($icons)<i class="nav-icon fa fa-truck"></i>@endif<p>Add Truck </p></a>
+                </li>
+            @endcan
 
         </ul>
 
 
-        </li>
+    </li>
 @endcan
+
 
 @can('faqs.index')
     <li class="nav-item has-treeview {{ Request::is('faqCategories*') || Request::is('faqs*') ? 'menu-open' : '' }}">
@@ -191,6 +192,13 @@
                 </li>
             @endcan
         </ul>
+    </li>
+@endcan
+@can('users.index')
+    <li class="nav-item">
+        <a class="nav-link {{ Request::is('users*') ? 'active' : '' }}" href="{!! route('users.index') !!}">@if($icons)
+                <i class="nav-icon fa fa-users"></i>@endif
+            <p>{{trans('lang.user_plural')}}</p></a>
     </li>
 @endcan
 
@@ -241,16 +249,16 @@
 @endcan
 
 @can('app-settings')
-    <li class="nav-item has-treeview {{ Request::is('settings/mobile*') || Request::is('slides*') ? 'menu-open' : '' }}">
+    <!--<li class="nav-item has-treeview {{ Request::is('settings/mobile*') || Request::is('slides*') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link {{ Request::is('settings/mobile*') || Request::is('slides*') ? 'active' : '' }}">
             @if($icons)<i class="nav-icon fa fa-mobile"></i>@endif
             <p>
                 {{trans('lang.mobile_menu')}}
-                <i class="right fa fa-angle-left"></i>
-            </p></a>
-        <ul class="nav nav-treeview">
-            <li class="nav-item">
-                <a href="{!! url('settings/mobile/globals') !!}" class="nav-link {{  Request::is('settings/mobile/globals*') ? 'active' : '' }}">
+            <i class="right fa fa-angle-left"></i>
+        </p></a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{!! url('settings/mobile/globals') !!}" class="nav-link {{  Request::is('settings/mobile/globals*') ? 'active' : '' }}">
                     @if($icons)<i class="nav-icon fa fa-cog"></i> @endif <p>{{trans('lang.app_setting_globals')}} <span class="right badge badge-danger">New</span> </p>
                 </a>
             </li>
@@ -264,19 +272,20 @@
             <li class="nav-item">
                 <a href="{!! url('settings/mobile/home') !!}" class="nav-link {{  Request::is('settings/mobile/home*') ? 'active' : '' }}">
                     @if($icons)<i class="nav-icon fa fa-home"></i> @endif <p>{{trans('lang.mobile_home')}}
-                        <span class="right badge badge-danger">New</span></p>
-                </a>
-            </li>
+            <span class="right badge badge-danger">New</span></p>
+    </a>
+</li>
 
-            @can('slides.index')
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('slides*') ? 'active' : '' }}" href="{!! route('slides.index') !!}">@if($icons)<i class="nav-icon fa fa-magic"></i>@endif<p>{{trans('lang.slide_plural')}} <span class="right badge badge-danger">New</span></p></a>
+@can('slides.index')
+        <li class="nav-item">
+            <a class="nav-link {{ Request::is('slides*') ? 'active' : '' }}" href="{!! route('slides.index') !!}">@if($icons)<i class="nav-icon fa fa-magic"></i>@endif<p>{{trans('lang.slide_plural')}} <span class="right badge badge-danger">New</span></p></a>
                 </li>
             @endcan
-        </ul>
+            </ul>
 
-    </li>
-    <li class="nav-item has-treeview {{
+        </li>
+
+        <li class="nav-item has-treeview {{
     (Request::is('settings*') ||
      Request::is('users*')) && !Request::is('settings/mobile*')
         ? 'menu-open' : '' }}">
@@ -288,50 +297,50 @@
             </p>
         </a>
         <ul class="nav nav-treeview">
-            <li class="nav-item">
+           <li class="nav-item">
                 <a href="{!! url('settings/app/globals') !!}" class="nav-link {{  Request::is('settings/app/globals*') ? 'active' : '' }}">
                     @if($icons)<i class="nav-icon fa fa-cog"></i> @endif <p>{{trans('lang.app_setting_globals')}}</p>
                 </a>
             </li>
 
             @can('users.index')
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('users*') ? 'active' : '' }}" href="{!! route('users.index') !!}">@if($icons)
-                            <i class="nav-icon fa fa-users"></i>@endif
-                        <p>{{trans('lang.user_plural')}}</p></a>
+        <li class="nav-item">
+            <a class="nav-link {{ Request::is('users*') ? 'active' : '' }}" href="{!! route('users.index') !!}">@if($icons)
+            <i class="nav-icon fa fa-users"></i>@endif
+                <p>{{trans('lang.user_plural')}}</p></a>
                 </li>
             @endcan
 
             <li class="nav-item has-treeview {{ Request::is('settings/permissions*') || Request::is('settings/roles*') ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ Request::is('settings/permissions*') || Request::is('settings/roles*') ? 'active' : '' }}">
                     @if($icons)<i class="nav-icon fa fa-user-secret"></i>@endif
-                    <p>
-                        {{trans('lang.permission_menu')}}
-                        <i class="right fa fa-angle-left"></i>
-                    </p></a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::is('settings/permissions') ? 'active' : '' }}" href="{!! route('permissions.index') !!}">
+            <p>
+{{trans('lang.permission_menu')}}
+            <i class="right fa fa-angle-left"></i>
+        </p></a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a class="nav-link {{ Request::is('settings/permissions') ? 'active' : '' }}" href="{!! route('permissions.index') !!}">
                             @if($icons)<i class="nav-icon fa fa-circle-o"></i>@endif
-                            <p>{{trans('lang.permission_table')}}</p>
+            <p>{{trans('lang.permission_table')}}</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ Request::is('settings/permissions/create') ? 'active' : '' }}" href="{!! route('permissions.create') !!}">
                             @if($icons)<i class="nav-icon fa fa-circle-o"></i>@endif
-                            <p>{{trans('lang.permission_create')}}</p>
+            <p>{{trans('lang.permission_create')}}</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ Request::is('settings/roles') ? 'active' : '' }}" href="{!! route('roles.index') !!}">
                             @if($icons)<i class="nav-icon fa fa-circle-o"></i>@endif
-                            <p>{{trans('lang.role_table')}}</p>
+            <p>{{trans('lang.role_table')}}</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ Request::is('settings/roles/create') ? 'active' : '' }}" href="{!! route('roles.create') !!}">
                             @if($icons)<i class="nav-icon fa fa-circle-o"></i>@endif
-                            <p>{{trans('lang.role_create')}}</p>
+            <p>{{trans('lang.role_create')}}</p>
                         </a>
                     </li>
                 </ul>
@@ -340,10 +349,10 @@
 
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('settings/customFields*') ? 'active' : '' }}" href="{!! route('customFields.index') !!}">@if($icons)
-                        <i class="nav-icon fa fa-list"></i>@endif<p>{{trans('lang.custom_field_plural')}}</p></a>
+        <i class="nav-icon fa fa-list"></i>@endif<p>{{trans('lang.custom_field_plural')}}</p></a>
             </li>
-
-
+       -->
+    <!--
             <li class="nav-item">
                 <a href="{!! url('settings/app/localisation') !!}" class="nav-link {{  Request::is('settings/app/localisation*') ? 'active' : '' }}">
                     @if($icons)<i class="nav-icon fa fa-language"></i> @endif <p>{{trans('lang.app_setting_localisation')}}</p></a>
@@ -353,8 +362,8 @@
                     @if($icons) <i class="nav-icon fa fa-language"></i> @endif <p>{{trans('lang.app_setting_translation')}}</p></a>
             </li>
             @can('currencies.index')
-            <li class="nav-item">
-                <a class="nav-link {{ Request::is('settings/currencies*') ? 'active' : '' }}" href="{!! route('currencies.index') !!}">@if($icons)<i class="nav-icon fa fa-dollar"></i>@endif<p>{{trans('lang.currency_plural')}}</p></a>
+        <li class="nav-item">
+            <a class="nav-link {{ Request::is('settings/currencies*') ? 'active' : '' }}" href="{!! route('currencies.index') !!}">@if($icons)<i class="nav-icon fa fa-dollar"></i>@endif<p>{{trans('lang.currency_plural')}}</p></a>
             </li>
             @endcan
 
@@ -383,6 +392,6 @@
                 </a>
             </li>
 
-        </ul>
+    </ul>-->
     </li>
 @endcan
