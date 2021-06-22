@@ -130,6 +130,46 @@ class UserAPIController extends Controller
         }
         return $this->sendResponse(0, 'Failed Phone Number');
     }
+    function verifydriverphone(Request $request){
+
+
+
+        $chars = "0123456789";
+        $otpval = "";
+        for ($i = 0; $i < 4; $i++){
+            $otpval .= $chars[mt_rand(0, strlen($chars)-1)];
+        }
+
+
+        $otpmessage = "Your verification code is: ".$otpval.".\nNote: Please DO NOT SHARE this code with anyone.";
+
+
+
+
+
+        $phone = $request->phone;
+
+        if(!str_contains('+', $request->phone)){
+            $phone = '+'.$request->phone;
+        }
+
+        $user_field = CustomFieldValue::where('value', $phone)->first();
+
+        if($user_field){
+
+            $user = User::find($user_field->customizable_id);
+
+            $user->otp = $otpval;
+            $user->save();
+
+            $this->sendSMS($phone,$otpmessage);
+
+            return $this->sendResponse(1, 'Verify Phone Number');
+
+        }
+
+        return $this->sendResponse(0, 'No such user is registered as a driver.');
+    }
 
     function loginphone(Request $request)
     {

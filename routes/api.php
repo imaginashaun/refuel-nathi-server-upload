@@ -37,6 +37,9 @@ Route::prefix('manager')->group(function () {
 });
 
 Route::post('verifyphone', 'API\UserAPIController@verifyphone');
+Route::post('driver/verifyphone', 'API\UserAPIController@verifydriverphone');
+
+
 Route::post('getotp', 'API\UserAPIController@getotp');
 Route::post('loginphone', 'API\UserAPIController@loginphone');
 
@@ -81,6 +84,7 @@ Route::get('testpay', 'PayFastController@testpay');
 Route::middleware('auth:api')->group(function () {
     Route::group(['middleware' => ['role:driver']], function () {
         Route::prefix('driver')->group(function () {
+
             Route::resource('orders', 'API\OrderAPIController');
             Route::resource('notifications', 'API\NotificationAPIController');
             Route::post('users/{id}', 'API\UserAPIController@update');
