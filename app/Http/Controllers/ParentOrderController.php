@@ -90,17 +90,46 @@ abstract class ParentOrderController extends Controller
 
     protected function createOrder()
     {
+
+        $allorders = [];
+
+
+        foreach ($this->order->user->cart as $cart) {
+
+            array_push($allorders,
+                $array_v = [
+                    'product_id'=>$cart->product->id,
+                    'item'=>$cart->product->name,
+                    'quantity'=>$cart->quantity,
+                    'vehicle'=>$cart->vehicles[0],
+                    // 'vehicle_reg'=>$cart->vehicles[0],
+                ]
+            );
+
+            // echo "cART";
+            //  print_r($array_v);
+            //  print_r($cart->product->name);
+
+            //  die();
+
+        }
+
         if (isset($this->order->payment->status)) {
             $this->calculateTotal();
             $this->order->order_status_id = 1;
             try {
-                $orders = (collect($this->order))->only('user_id', 'order_status_id', 'tax', 'delivery_address_id', 'delivery_fee', 'hint')->toArray();
+                $orders = (collect($this->order))->only('user_id', 'order_status_id', 'tax', 'delivery_address_id', 'delivery_fee', 'hint','vehicles')->toArray();
+
                 $order = $this->orderRepository->create($orders);
                 $this->order->id = $order->id;
+
                 $this->syncProducts();
+
                 $payment = $this->createPayment();
                 $this->cartRepository->deleteWhere(['user_id' => $this->order->user_id]);
+
                 $this->orderRepository->update(['payment_id' => $payment->id], $this->order->id);
+                $this->orderRepository->update(['vehicles' => $allorders], $this->order->id);
             } catch (ValidatorException $e) {
                 Log::error($e->getMessage());
             }

@@ -49,12 +49,12 @@ class PayFastController extends ParentOrderController
 
         $payPalCart = $this->getCheckoutData();
 
-            // Perform transaction on PayPal
-            $this->order->payment = new Payment();
-            $this->order->payment->status = "succeeded";
-            $this->order->payment->method = 'PayFast';
+        // Perform transaction on PayPal
+        $this->order->payment = new Payment();
+        $this->order->payment->status = "Paid";
+        $this->order->payment->method = 'PayFast';
 
-            $this->createOrder();
+        $this->createOrder();
 
 
 
@@ -92,15 +92,15 @@ class PayFastController extends ParentOrderController
                 ]
             );
 
-          /*  $data = [
-                'amount' => '100.00',
-                'item_name' => 'Order#123',
-                'm_payment_id' => '2',
-                'return_url' => env('RETURN_URL'),
-                'cancel_url' => env('CANCEL_URL'),
-                'notify_url' => env('NOTIFY_URL'),
-            ];
-*/
+            /*  $data = [
+                  'amount' => '100.00',
+                  'item_name' => 'Order#123',
+                  'm_payment_id' => '2',
+                  'return_url' => env('RETURN_URL'),
+                  'cancel_url' => env('CANCEL_URL'),
+                  'notify_url' => env('NOTIFY_URL'),
+              ];
+  */
             $data = $this->getCheckoutData();
 
             echo "<html><body><script type='text/javascript'>window.onload = function() {document.querySelector('form').submit();}</script>";
@@ -113,38 +113,38 @@ class PayFastController extends ParentOrderController
 
 
 
-/*
-        try {
-            $payfast = new PayFastPayment(
-                [
-                    'merchantId' => '10022866',
-                    'merchantKey' => 'j5jlaeuaauxi3',
-                    'passPhrase' => '',
-                    'testMode' => true
-                ]
-            );
+        /*
+                try {
+                    $payfast = new PayFastPayment(
+                        [
+                            'merchantId' => '10022866',
+                            'merchantKey' => 'j5jlaeuaauxi3',
+                            'passPhrase' => '',
+                            'testMode' => true
+                        ]
+                    );
 
-            $data = [
-                'amount' => '100.00',
-                'item_name' => 'Order#123'
-            ];
+                    $data = [
+                        'amount' => '100.00',
+                        'item_name' => 'Order#123'
+                    ];
 
-            // Generate payment identifier
-            $identifier = $payfast->onsite->generatePaymentIdentifier($data);
+                    // Generate payment identifier
+                    $identifier = $payfast->onsite->generatePaymentIdentifier($data);
 
 
 
-            return view('payfast', ['identifier' => $identifier]);
+                    return view('payfast', ['identifier' => $identifier]);
 
-        } catch(Exception $e) {
-            //return view('greeting', ['name' => 'Finn']);
+                } catch(Exception $e) {
+                    //return view('greeting', ['name' => 'Finn']);
 
-            echo 'There was an exception: '.$e->getMessage();
+                    echo 'There was an exception: '.$e->getMessage();
 
-            die();
-        }
+                    die();
+                }
 
-*/
+        */
     }
 
     private function getCheckoutData()
@@ -163,14 +163,14 @@ class PayFastController extends ParentOrderController
         ];
 
         //$data['total'] = $this->total;
-     //   $data['return_url'] = url("api/paymentreturn?user_id=" . $this->order->user_id . "&delivery_address_id=" . $this->order->delivery_address_id);
+        //   $data['return_url'] = url("api/paymentreturn?user_id=" . $this->order->user_id . "&delivery_address_id=" . $this->order->delivery_address_id);
 
         if (isset($this->coupon)) {
             $data['return_url'] .= "&coupon_code=" . $this->coupon->code;
         }
-      //  $data['cancel_url'] = url('payments/paypal');
-      //  $data['invoice_id'] = $order_id . '_' . date("Y_m_d_h_i_sa");
-      //  $data['invoice_description'] = $this->order->user->cart[0]->product->market->name;
+        //  $data['cancel_url'] = url('payments/paypal');
+        //  $data['invoice_id'] = $order_id . '_' . date("Y_m_d_h_i_sa");
+        //  $data['invoice_description'] = $this->order->user->cart[0]->product->market->name;
 
         //dd($data);
         return $data;

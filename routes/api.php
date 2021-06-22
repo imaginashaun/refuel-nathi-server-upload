@@ -37,8 +37,8 @@ Route::prefix('manager')->group(function () {
 });
 
 Route::post('verifyphone', 'API\UserAPIController@verifyphone');
+Route::post('getotp', 'API\UserAPIController@getotp');
 Route::post('loginphone', 'API\UserAPIController@loginphone');
-
 
 Route::post('login', 'API\UserAPIController@login');
 Route::post('register', 'API\UserAPIController@register');

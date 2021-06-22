@@ -37,7 +37,7 @@ class Order extends Model
 {
 
     public $table = 'orders';
-    
+
 
 
     public $fillable = [
@@ -53,7 +53,8 @@ class Order extends Model
         'delivery_fee',
         'active',
         'driver_id',
-        'suggested_driver_id'
+        'suggested_driver_id',
+        'vehicles',
     ];
 
     /**
@@ -75,7 +76,8 @@ class Order extends Model
         'delivery_fee'=>'double',
         'active'=>'boolean',
         'driver_id' => 'integer',
-        'suggested_driver_id'=>'integer'
+        'suggested_driver_id'=>'integer',
+        'vehicles'=>'json'
     ];
 
     /**
@@ -100,7 +102,7 @@ class Order extends Model
      */
     protected $appends = [
         'custom_fields',
-        
+
     ];
 
     public function customFieldsValues()
@@ -189,7 +191,7 @@ class Order extends Model
     {
         return $this->belongsTo(\App\Models\DeliveryAddress::class, 'delivery_address_id', 'id');
     }
-    
+
 
     public function pickAddress()
     {

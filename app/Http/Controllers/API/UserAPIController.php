@@ -16,6 +16,7 @@ use App\Repositories\CustomFieldRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UploadRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -57,14 +58,40 @@ class UserAPIController extends Controller
         //echo "AT: ".$auth_token;
         //echo "ASID: ".$account_sid;
 
-       // die();
+        // die();
         $client = new Client($account_sid, $auth_token);
         $client->messages->create($phone,
             ['from' => $twilio_number, 'body' => $message] );
 
     }
 
+
+    public function getotp(Request $request){
+
+        $chars = "0123456789";
+        $otpval = "";
+        for ($i = 0; $i < 4; $i++){
+            $otpval .= $chars[mt_rand(0, strlen($chars)-1)];
+        }
+
+
+        $otpmessage = "Your verification code is: ".$otpval.".\nNote: Please DO NOT SHARE this code with anyone.";
+
+
+
+        $phone = $request->phone;
+
+        if(!str_contains('+', $request->phone)){
+            $phone = '+'.$request->phone;
+        }
+
+        $this->sendSMS($phone,$otpmessage);
+
+        return $this->sendResponse(1, $otpval);
+    }
+
     function verifyphone(Request $request){
+
 
 
         $chars = "0123456789";
@@ -101,18 +128,12 @@ class UserAPIController extends Controller
             return $this->sendResponse(1, 'Verify Phone Number');
 
         }
-
         return $this->sendResponse(0, 'Failed Phone Number');
-
-
     }
-
 
     function loginphone(Request $request)
     {
         try {
-
-
             $phone = $request->input('phone', '');
 
             if(!str_contains('+', $request->input('phone', ''))){
@@ -120,18 +141,14 @@ class UserAPIController extends Controller
             }
 
             $user_field = CustomFieldValue::where('value', $phone)->first();
-
             if($user_field) {
 
-                $user = User::where('id',1)->first();
-
-           //     $user->device_token = $request->input('device_token', '');
-           //     $user->save();
-
-
-
+                $user = User::where('id',$user_field->customizable_id)->first();
+//edit here
+                //     $user->device_token = $request->input('device_token', '');
+                //     $user->save();
                 // Authentication passed...
-            //    $user = auth()->user();
+                //    $user = auth()->user();
                 $user->device_token = $request->input('device_token', '');
                 $user->save();
                 return $this->sendResponse($user, 'User retrieved successfully');
@@ -177,6 +194,7 @@ class UserAPIController extends Controller
                 'name' => 'required',
                 'email' => 'required|unique:users|email',
                 'password' => 'required',
+                'phone' => 'required',
             ]);
             $user = new User;
             $user->name = $request->input('name');
@@ -186,10 +204,21 @@ class UserAPIController extends Controller
             $user->api_token = str_random(60);
             $user->save();
 
+            $customValues = [
+                'customizable_type'=>'App\Models\User',
+                'custom_field_id'=>4,
+                'value'=>"+".$request->input('phone'),
+                'view'=>"+".$request->input('phone'),
+                'customizable_id'=>$user->id,
+            ];
+
+
+            $user->customFieldsValues()
+                ->updateOrCreate(['custom_field_id' => $customValues['custom_field_id']], $customValues);
+
             $defaultRoles = $this->roleRepository->findByField('default', '1');
             $defaultRoles = $defaultRoles->pluck('name')->toArray();
             $user->assignRole($defaultRoles);
-
 
             if (copy(public_path('images/avatar_default.png'), public_path('images/avatar_default_temp.png'))) {
                 $user->addMedia(public_path('images/avatar_default_temp.png'))
