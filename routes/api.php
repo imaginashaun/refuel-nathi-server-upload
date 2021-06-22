@@ -42,6 +42,7 @@ Route::post('driver/verifyphone', 'API\UserAPIController@verifydriverphone');
 
 Route::post('getotp', 'API\UserAPIController@getotp');
 Route::post('loginphone', 'API\UserAPIController@loginphone');
+Route::post('driver/loginphone', 'API\UserAPIController@loginphone');
 
 Route::post('login', 'API\UserAPIController@login');
 Route::post('register', 'API\UserAPIController@register');
