@@ -98,6 +98,78 @@
             </p>
         </div>
     </div>
+
+    <div class="card-body login-card-body">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">Support Contact</p>
+
+            <form action="{{ url('/login') }}" method="post">
+                {!! csrf_field() !!}
+
+                You can contact Support by filling in your details below:
+                <div class="input-group mb-3">
+                    <input value="{{ old('email') }}" type="email" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" placeholder="{{ __('auth.email') }}" aria-label="{{ __('auth.email') }}">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                    </div>
+                    @if ($errors->has('email'))
+                        <div class="invalid-feedback">
+                            {{ $errors->first('email') }}
+                        </div>
+                    @endif
+                </div>
+
+                <div class="input-group mb-3">
+                    <input value="{{ old('message') }}" type="message" class="form-control  {{ $errors->has('message') ? ' is-invalid' : '' }}" name="message" placeholder="Your Message" aria-label="Your Message">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-mail-forward"></i></span>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+
+                    <!-- /.col -->
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block">Send</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+
+                <p>
+                    You can also reach us directly on <a href="mailto:support@refuelnathi365.co.za">support@refuelnathi365.co.za</a>
+                </p>
+
+                @if(env('APP_DEMO',false))
+                    <div class="row mb-2">
+                        <div class="col-12 callout callout-success">
+                            <h6 class="text-bold">Admin</h6>
+                            <p><small>User: admin@demo.com | Password: 123456</small></p>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12 callout callout-warning">
+                            <h6 class="text-bold">Manager</h6>
+                            <p><small>User: manager@demo.com | Password: 123456</small></p>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12 callout callout-danger">
+                            <h6 class="text-bold">Client</h6>
+                            <p><small>User: client@demo.com | Password: 123456</small></p>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                @endif
+
+            </form>
+
+
+
+
+        </div>
+    </div>
 @endsection
 
 
