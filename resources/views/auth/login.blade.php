@@ -162,12 +162,7 @@
                         <!-- /.col -->
                     </div>
                 @endif
-
             </form>
-
-
-
-
         </div>
     </div>
 @endsection

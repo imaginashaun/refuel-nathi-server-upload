@@ -48,6 +48,10 @@ Route::get('payments/razorpay', 'RazorPayController@index');
 Route::get('payments/paypal/express-checkout', 'PayPalController@getExpressCheckout')->name('paypal.express-checkout');
 Route::get('payments/payfast/checkout', 'PayFastController@checkout');
 
+Route::get('privacy_policy', 'PayFastController@privacypolicy');
+Route::get('terms', 'PayFastController@privacy_policy');
+
+
 Route::get('payments/paypal/express-checkout-success', 'PayPalController@getExpressCheckoutSuccess');
 Route::get('payments/paypal', 'PayPalController@index')->name('paypal.index');
 

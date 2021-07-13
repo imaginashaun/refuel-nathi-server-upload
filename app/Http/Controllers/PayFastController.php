@@ -18,6 +18,15 @@ class PayFastController extends ParentOrderController
 
     }
 
+    public function privacypolicy(){
+
+
+
+        return view('privacypolicy');
+
+    }
+
+
     public function generateSignature($data, $passPhrase = null) {
         // Create parameter string
         $pfOutput = '';
@@ -146,6 +155,7 @@ class PayFastController extends ParentOrderController
 
         */
     }
+
 
     private function getCheckoutData()
     {
