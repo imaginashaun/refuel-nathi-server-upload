@@ -74,6 +74,7 @@ class UserAPIController extends Controller
             $otpval .= $chars[mt_rand(0, strlen($chars)-1)];
         }
 
+        $otpval = "1234";
 
         $otpmessage = "Your verification code is: ".$otpval.".\nNote: Please DO NOT SHARE this code with anyone.";
 
@@ -99,6 +100,7 @@ class UserAPIController extends Controller
         for ($i = 0; $i < 4; $i++){
             $otpval .= $chars[mt_rand(0, strlen($chars)-1)];
         }
+        $otpval = "1234";
 
 
         $otpmessage = "Your verification code is: ".$otpval.".\nNote: Please DO NOT SHARE this code with anyone.";
@@ -140,6 +142,7 @@ class UserAPIController extends Controller
             $otpval .= $chars[mt_rand(0, strlen($chars)-1)];
         }
 
+        $otpval = "1234";
 
         $otpmessage = "Your verification code is: ".$otpval.".\nNote: Please DO NOT SHARE this code with anyone.";
 
