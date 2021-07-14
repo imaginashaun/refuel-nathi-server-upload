@@ -20,8 +20,6 @@ class PayFastController extends ParentOrderController
 
     public function privacypolicy(){
 
-
-
         return view('privacypolicy');
 
     }
