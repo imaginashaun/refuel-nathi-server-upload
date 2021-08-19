@@ -92,9 +92,9 @@ class PayFastController extends ParentOrderController
         try {
             $payfast = new PayFastPayment(
                 [
-                    'merchantId' => '10022866',
-                    'merchantKey' => 'j5jlaeuaauxi3',
-                    'passPhrase' => '',
+                    'merchantId' => '17865592',
+                    'merchantKey' => '6s8acqtzs197z',
+                    'passPhrase' => 'MphatengPooe01',
                     'testMode' => false//
                 ]
             );
