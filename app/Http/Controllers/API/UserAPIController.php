@@ -95,6 +95,7 @@ class UserAPIController extends Controller
 
 
         $chars = "0123456789";
+        //
         $otpval = "";
         for ($i = 0; $i < 4; $i++){
             $otpval .= $chars[mt_rand(0, strlen($chars)-1)];
