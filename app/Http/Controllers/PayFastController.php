@@ -95,7 +95,7 @@ class PayFastController extends ParentOrderController
                     'merchantId' => '10022866',
                     'merchantKey' => 'j5jlaeuaauxi3',
                     'passPhrase' => '',
-                    'testMode' => true
+                    'testMode' => false
                 ]
             );
 
